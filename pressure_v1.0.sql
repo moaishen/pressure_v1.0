@@ -108,3 +108,65 @@ CREATE TABLE `statistic_attack_total` (
 	PRIMARY KEY (`id`)
 ) ENGINE = INNODB AUTO_INCREMENT = 288961 DEFAULT CHARSET = utf8 COMMENT = '攻击节点信息统计，按统计时间存取从上次统计到本次统计时，所有工具发送的总流量和总攻击次数';
 
+CREATE TABLE `attack_batch` (
+	`aid` INT (11) UNSIGNED NOT NULL AUTO_INCREMENT,
+	`did` TINYINT (3) UNSIGNED NOT NULL COMMENT '攻击工具ID',
+	`tool_scale` SMALLINT (6) UNSIGNED NOT NULL COMMENT '批次中工具的占比，单位/10000',
+	`tool_class` VARCHAR (128) NOT NULL DEFAULT '' COMMENT '批次中工具所属的类别',
+	`bid` INT (11) UNSIGNED NOT NULL COMMENT '批次ID',
+	PRIMARY KEY (`aid`)
+) ENGINE = INNODB AUTO_INCREMENT = 401 DEFAULT CHARSET = utf8 COMMENT = '批次中攻击工具的分布';
+
+CREATE TABLE `job_queue` (
+	`id` INT (11) NOT NULL AUTO_INCREMENT,
+	`job_id` VARCHAR (45) DEFAULT NULL,
+	`batch_id` INT (11) DEFAULT NULL,
+	`status` enum (
+		'Running',
+		'Waiting',
+		'Finish'
+	) DEFAULT NULL,
+	PRIMARY KEY (`id`)
+) ENGINE = INNODB AUTO_INCREMENT = 342 DEFAULT CHARSET = utf8;
+
+CREATE TABLE `log_error` (
+	`id` INT (11) UNSIGNED NOT NULL AUTO_INCREMENT,
+	`log_detail` text NOT NULL COMMENT '日志详细信息',
+	`log_source` text COMMENT '日志的来源',
+	`log_record_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '日志记录的时间',
+	PRIMARY KEY (`id`)
+) ENGINE = INNODB DEFAULT CHARSET = utf8;
+
+CREATE TABLE `statistic_node` (
+	`id` TINYINT (3) UNSIGNED NOT NULL AUTO_INCREMENT,
+	`node_name` VARCHAR (128) NOT NULL DEFAULT '' COMMENT '节点名称',
+	`node_address` VARCHAR (255) NOT NULL DEFAULT '' COMMENT '节点地址',
+	`send_package_count` INT (10) UNSIGNED NOT NULL DEFAULT '0' COMMENT '发送攻击次数',
+	`send_flow_count` FLOAT (13, 3) UNSIGNED NOT NULL COMMENT '发送攻击流量，单位MB',
+	`node_cpu` FLOAT (6, 3) UNSIGNED NOT NULL COMMENT 'CPU利用率',
+	PRIMARY KEY (`id`)
+) ENGINE = INNODB AUTO_INCREMENT = 2 DEFAULT CHARSET = utf8 COMMENT = '测试源监控测试节点统计，各个镜像的一些信息统计，每次开始新批次时，清空此表';
+
+CREATE TABLE `statistic_target` (
+	`id` INT (11) UNSIGNED NOT NULL AUTO_INCREMENT,
+	`sid` INT (10) UNSIGNED NOT NULL COMMENT '检测方法ID',
+	`check_result` INT (7) UNSIGNED NOT NULL COMMENT '检测结果，单位毫秒',
+	`bid` INT (10) UNSIGNED NOT NULL COMMENT '批次ID',
+	`check_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '本次检测结果写入数据库时间',
+	PRIMARY KEY (`id`)
+) ENGINE = INNODB AUTO_INCREMENT = 72892 DEFAULT CHARSET = utf8 COMMENT = '主监控目标状态监控统计，按批次随时间存取检测时间和结果';
+
+CREATE TABLE `detection_batch` (
+	`cid` INT (11) UNSIGNED NOT NULL AUTO_INCREMENT,
+	`bid` INT (11) UNSIGNED NOT NULL COMMENT '批次ID',
+	`sid` TINYINT (3) UNSIGNED NOT NULL COMMENT '检测手段ID',
+	PRIMARY KEY (`cid`)
+) ENGINE = INNODB AUTO_INCREMENT = 454 DEFAULT CHARSET = utf8 COMMENT = '批次中对目标检测存活的方法';
+
+#待定项
+CREATE TABLE `server_agency` (
+	`id` INT (11) UNSIGNED NOT NULL AUTO_INCREMENT,
+	`uid` INT (11) UNSIGNED NOT NULL COMMENT '用户ID',
+	`bid` INT (11) UNSIGNED NOT NULL COMMENT '批次ID' PRIMARY KEY (`id`)
+) ENGINE = INNODB AUTO_INCREMENT = 454 DEFAULT CHARSET = utf8 COMMENT = '服务器与代理列表';
+
