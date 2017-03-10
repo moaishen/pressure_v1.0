@@ -163,7 +163,7 @@ CREATE TABLE `detection_batch` (
 	PRIMARY KEY (`cid`)
 ) ENGINE = INNODB AUTO_INCREMENT = 454 DEFAULT CHARSET = utf8 COMMENT = '批次中对目标检测存活的方法';
 
-#待定项
+#待定项...
 CREATE TABLE `server_agency` (
 	`id` INT (11) UNSIGNED NOT NULL AUTO_INCREMENT,
 	`uid` INT (11) UNSIGNED NOT NULL COMMENT '用户ID',
