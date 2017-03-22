@@ -143,14 +143,17 @@ CREATE TABLE `statistic_node` (
 	`node_address` VARCHAR (255) NOT NULL DEFAULT '' COMMENT '节点地址',
 	`send_package_count` INT (10) UNSIGNED NOT NULL DEFAULT '0' COMMENT '发送攻击次数',
 	`send_flow_count` FLOAT (13, 3) UNSIGNED NOT NULL COMMENT '发送攻击流量，单位MB',
-	`node_cpu` FLOAT (6, 3) UNSIGNED NOT NULL COMMENT 'CPU利用率',
-	PRIMARY KEY (`id`)
+	# -3.21-
+	#`node_cpu` FLOAT (6, 3) UNSIGNED NOT NULL COMMENT 'CPU利用率',
+        `state` enum ('失联', '活跃', '正常') DEFAULT NULL COMMENT '状态，枚举类型待定中 // 失联|活跃|........',
+ PRIMARY KEY (`id`)
 ) ENGINE = INNODB AUTO_INCREMENT = 2 DEFAULT CHARSET = utf8 COMMENT = '测试源监控测试节点统计，各个镜像的一些信息统计，每次开始新批次时，清空此表';
 
 CREATE TABLE `statistic_target` (
 	`id` INT (11) UNSIGNED NOT NULL AUTO_INCREMENT,
 	`sid` INT (10) UNSIGNED NOT NULL COMMENT '检测方法ID',
 	`check_result` INT (7) UNSIGNED NOT NULL COMMENT '检测结果，单位毫秒',
+
 	`bid` INT (10) UNSIGNED NOT NULL COMMENT '批次ID',
 	`check_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '本次检测结果写入数据库时间',
 	PRIMARY KEY (`id`)
@@ -163,10 +166,33 @@ CREATE TABLE `detection_batch` (
 	PRIMARY KEY (`cid`)
 ) ENGINE = INNODB AUTO_INCREMENT = 454 DEFAULT CHARSET = utf8 COMMENT = '批次中对目标检测存活的方法';
 
-#待定项...
-CREATE TABLE `server_agency` (
+#待定项
+/*CREATE TABLE `server_agency` (
 	`id` INT (11) UNSIGNED NOT NULL AUTO_INCREMENT,
 	`uid` INT (11) UNSIGNED NOT NULL COMMENT '用户ID',
 	`bid` INT (11) UNSIGNED NOT NULL COMMENT '批次ID' PRIMARY KEY (`id`)
-) ENGINE = INNODB AUTO_INCREMENT = 454 DEFAULT CHARSET = utf8 COMMENT = '服务器与代理列表';
+) ENGINE = INNODB AUTO_INCREMENT = 454 DEFAULT CHARSET = utf8 COMMENT = '服务器与代理列表';*/
+#待定表 -3.21-
 
+CREATE TABLE `server` (
+	`id` INT (11) UNSIGNED NOT NULL AUTO_INCREMENT,
+	`uid` INT (11) UNSIGNED NOT NULL COMMENT '用户ID',
+	`bid` INT (11) UNSIGNED NOT NULL COMMENT '批次ID' PRIMARY KEY (`id`),
+	`server_ip` VARCHAR (255) DEFAULT '' COMMENT '服务器列表IP地址',
+	`load` INT (11) UNSIGNED DEFAULT '0' COMMENT '负载',
+
+) ENGINE = INNODB AUTO_INCREMENT = 454 DEFAULT CHARSET = utf8 COMMENT = '服务器列表';
+
+CREATE TABLE `agency` (
+	`id` INT (11) UNSIGNED NOT NULL AUTO_INCREMENT,
+	`uid` INT (11) UNSIGNED NOT NULL COMMENT '用户ID',
+	`bid` INT (11) UNSIGNED NOT NULL COMMENT '批次ID' PRIMARY KEY (`id`),
+	`agency_ip` VARCHAR (255) DEFAULT '' COMMENT '代理列表IP地址',
+	`port` INT (11) UNSIGNED DEFAULT '0' COMMENT 'Port',
+	`state` enum (
+		'启动中',
+		'等待中',
+		'结束'
+	) DEFAULT NULL COMMENT '状态，枚举类型待定中 // 启动中|......|........',
+
+) ENGINE = INNODB AUTO_INCREMENT = 454 DEFAULT CHARSET = utf8 COMMENT = '代理列表';
